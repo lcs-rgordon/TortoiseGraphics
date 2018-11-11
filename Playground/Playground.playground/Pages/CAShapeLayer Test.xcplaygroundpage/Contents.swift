@@ -45,9 +45,6 @@ myCAShapeLayer.fillColor = nil
 myCAShapeLayer.strokeColor = NSColor(hue: 0, saturation: 0, brightness: 0, alpha: 1).cgColor
 myView.layer!.addSublayer(myCAShapeLayer)
 
-// Start a path
-var pathToRender = NSBezierPath()
-
 // Add a single line
 var firstPath = NSBezierPath()
 firstPath.move(to: CGPoint(x: 0, y: 0))
