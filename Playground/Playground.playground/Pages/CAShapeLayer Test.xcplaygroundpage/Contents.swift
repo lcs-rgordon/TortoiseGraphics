@@ -54,9 +54,8 @@ firstPath.move(to: CGPoint(x: 0, y: 0))
 firstPath.line(to: CGPoint(x: 10, y: 5))
 firstPath.lineWidth = 2.0
 
-// Make a second line
-var secondPath = NSBezierPath()
-secondPath.move(to: CGPoint(x: 0, y: 0))
+// Make a second line (copy first path then add next path)
+var secondPath = firstPath.copy() as! NSBezierPath
 secondPath.line(to: CGPoint(x: 200, y: 100))
 
 // Set the initial path for the shape layer
