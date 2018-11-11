@@ -19,6 +19,8 @@ class TortoiseCharmer {
 
     private(set) var tortoises: [Tortoise] = []
     private(set) var commandHistories: [(tortoiseTag: Int, commandIndex: Int)] = []
+    private var priorCommandHistoriesCount: Int = 0
+    private var commandHistoriesUnchangedCount: Int = 0
 
     var commandedHandler: ((TortoiseCharmer) -> Void)?
 
@@ -30,6 +32,8 @@ class TortoiseCharmer {
         assert(tortoiseCount > 0)
         tortoises = []
         commandHistories = []
+        priorCommandHistoriesCount = 0
+        commandHistoriesUnchangedCount = 0
         for index in 0..<tortoiseCount {
             let tortoise = Tortoise()
             tortoise.tag = index
@@ -89,29 +93,93 @@ class TortoiseCharmer {
 //            }
 //        }
 
-        // Attempted fix #3
-        // Make a copy of the array of Tortoise commands for each Tortoise
-        // NOTE: Again, while this works, it doesn't feel elegant
-        var commandsToRun = [ Int: [Command] ]()
-        for (index, tortoise) in tortoises.enumerated() {
-            commandsToRun[index] = tortoise.commands
+//        // Attempted fix #3
+//        // Make a copy of the array of Tortoise commands for each Tortoise
+//        // NOTE: Again, while this works, it doesn't feel elegant
+//        var commandsToRun = [ Int: [Command] ]()
+//        for (index, tortoise) in tortoises.enumerated() {
+//            commandsToRun[index] = tortoise.commands
+//        }
+//        // Now iterate over all the commands in the command history and run
+//        // using the copy of commands for each tortoise (saved a moment ago)
+//        for (index, history) in commandHistories.enumerated() where index <= toIndex {
+//
+//            // Get commands out of the dictionary for the current tortoise
+//            if let commands = commandsToRun[history.tortoiseTag] {
+//
+//                // Try to avoid index out of range rrors
+//                if commands[exist: history.commandIndex] != nil {
+//
+//                    // Actually run the command at the given index
+//                    states[history.tortoiseTag] = commands[history.commandIndex]
+//                        .exexute(in: states[history.tortoiseTag], with: context.cgContext)
+//                }
+//            }
+//        }
+
+        // Revised fix
+        // Has the main thread finished adding commands to the tortoises and history?
+        // In other words, have the Tortoise commands arrays stabilized?
+        // (Defining "stable" as this method being called five times with unchanged counts)
+        if priorCommandHistoriesCount == commandHistories.count {
+            if commandHistoriesUnchangedCount < 5 {
+                commandHistoriesUnchangedCount += 1
+            }
+        } else {
+            // Command histories count changed, reset counter
+            commandHistoriesUnchangedCount = 0
         }
-        // Now iterate over all the commands in the command history and run
-        // using the copy of commands for each tortoise (saved a moment ago)
-        for (index, history) in commandHistories.enumerated() where index <= toIndex {
 
-            // Get commands out of the dictionary for the current tortoise
-            if let commands = commandsToRun[history.tortoiseTag] {
+        os_log("Command histories unchanged for %d calls", commandHistoriesUnchangedCount)
 
-                // Try to avoid index out of range rrors
-                if commands[exist: history.commandIndex] != nil {
+        // Commands arrays are not being changed by other thread, so we can use them directly
+        if commandHistoriesUnchangedCount == 5 {
 
-                    // Actually run the command at the given index
-                    states[history.tortoiseTag] = commands[history.commandIndex]
+            // If so, we can safely use the commands array on each Tortoise instance
+            for (index, history) in commandHistories.enumerated() where index <= toIndex {
+                states[history.tortoiseTag] =
+                    tortoises[history.tortoiseTag]
+                        .commands[history.commandIndex]
                         .exexute(in: states[history.tortoiseTag], with: context.cgContext)
+            }
+
+            os_log("ran original code")
+
+        } else {
+
+            // Commands arrays still being changed by other thread.
+            //
+            // So, make a local copy of the commands array for each Tortoise instance for use in this thread
+            // to avoid index out of range errors (when commands array on Tortoise instances are modified by
+            // the main thread)
+            var commandsToRun = [ Int: [Command] ]()
+            for (index, tortoise) in tortoises.enumerated() {
+                commandsToRun[index] = tortoise.commands
+            }
+
+            // Now iterate over all the commands in the command history and run
+            // using the copy of commands for each tortoise (saved a moment ago)
+            for (index, history) in commandHistories.enumerated() where index <= toIndex {
+
+                // Get commands out of the dictionary for the current tortoise
+                if let commands = commandsToRun[history.tortoiseTag] {
+
+                    // Try to avoid index out of range rrors
+                    if commands[exist: history.commandIndex] != nil {
+
+                        // Actually run the command at the given index
+                        states[history.tortoiseTag] = commands[history.commandIndex]
+                            .exexute(in: states[history.tortoiseTag], with: context.cgContext)
+                    }
                 }
             }
+
+            os_log("ran modified code")
+
         }
+
+        // Save the count of command histories to refer to next time this method is called
+        priorCommandHistoriesCount = commandHistories.count
 
         // More testing to determine what array is encountering an index out of range exception
 //        for (index, history) in commandHistories.enumerated() where index <= toIndex {
