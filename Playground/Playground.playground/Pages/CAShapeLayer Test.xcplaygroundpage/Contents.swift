@@ -26,24 +26,15 @@ let myFrame = CGRect(x: 0, y: 0, width: 400, height: 200)
 let myView = NSView(frame: myFrame)
 PlaygroundPage.current.liveView = myView
 
-// Give the NSView a layer (it doesn't get one by default like UIView)
-myView.layer = CALayer()
-
-// Set a background color
-var background = CALayer()
-background.bounds = CGRect(x: 0, y: 0, width: myFrame.width, height: myFrame.height)
-background.position = CGPoint(x: myFrame.width / 2, y: myFrame.height / 2)
-background.backgroundColor = NSColor(hue: 80/360.0, saturation: 0.8, brightness: 0.9, alpha: 1.0).cgColor
-myView.layer!.addSublayer(background)
-
-// Add a shape layer
+// Create a CAShapeLayer instance, add to view, and configure
 var myCAShapeLayer = CAShapeLayer()
+myView.layer = myCAShapeLayer
 myCAShapeLayer.bounds = CGRect(x: 0, y: 0, width: myFrame.width, height: myFrame.height)
-myCAShapeLayer.position = CGPoint(x: myFrame.width / 2, y: myFrame.height / 2)
+myCAShapeLayer.position = CGPoint(x: 0, y: 0)
 myCAShapeLayer.lineWidth = 2.0
 myCAShapeLayer.fillColor = nil
+myCAShapeLayer.backgroundColor = NSColor(hue: 80/360.0, saturation: 0.8, brightness: 0.9, alpha: 1.0).cgColor
 myCAShapeLayer.strokeColor = NSColor(hue: 0, saturation: 0, brightness: 0, alpha: 1).cgColor
-myView.layer!.addSublayer(myCAShapeLayer)
 
 // Add a single line
 var firstPath = NSBezierPath()
