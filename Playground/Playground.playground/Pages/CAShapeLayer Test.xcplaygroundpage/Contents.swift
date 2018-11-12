@@ -53,7 +53,7 @@ myCAShapeLayer.path = firstPath.cgPath
 let pathAnimation = CABasicAnimation(keyPath: "path")
 pathAnimation.toValue = secondPath.cgPath
 pathAnimation.duration = 10.0
-pathAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+pathAnimation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
 pathAnimation.autoreverses = false
 // Make sure the state when animation is complete remains visible
 pathAnimation.isRemovedOnCompletion = false
