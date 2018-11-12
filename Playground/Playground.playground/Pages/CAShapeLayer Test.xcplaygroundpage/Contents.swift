@@ -60,5 +60,5 @@ pathAnimation.isRemovedOnCompletion = false
 pathAnimation.fillMode = CAMediaTimingFillMode.forwards
 
 // Add and run the animation
-myCAShapeLayer.add(pathAnimation, forKey: "path")
+myCAShapeLayer.add(pathAnimation, forKey: pathAnimation.keyPath)
 
