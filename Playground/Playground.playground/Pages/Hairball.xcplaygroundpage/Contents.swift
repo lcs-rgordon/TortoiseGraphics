@@ -44,7 +44,7 @@ canvas.drawing { turtle in
         // Return to middle of canvas
         turtle.penUp()
         turtle.goto(0, 0)
-        turtle.setH(0)
+        turtle.setHeading(0)
         turtle.penDown()
         
     }
