@@ -3,5 +3,7 @@
     <pages>
         <page name='With a tortoise'/>
         <page name='With 2 tortoises'/>
+        <page name='Blank page'/>
+        <page name='Circle of Circles'/>
     </pages>
 </playground>
