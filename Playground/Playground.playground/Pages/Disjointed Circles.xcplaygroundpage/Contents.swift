@@ -34,6 +34,7 @@ func polyline(with t : Tortoise, segmentCount n : Int, length : Double, angle : 
  */
 func arc(with t : Tortoise, radius r : Double, angle : Int) {
     
+    // Source: https://bit.ly/2K9JWbz
     let arcLength = 2 * Double.pi * r * Double(abs(angle)) / 360
     let n = Int(arcLength / 4) + 1
     let stepLength = arcLength / Double(n)
