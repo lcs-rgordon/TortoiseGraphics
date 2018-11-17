@@ -48,7 +48,7 @@ func arc(with t : Tortoise, radius r : Double, angle : Int) {
 }
 
 canvas.drawing { turtle in
-
+    // Draw 10 semi-circles of increasing radius size
     for i in 1...10 {
         arc(with: turtle, radius: 10 * Double(i), angle: 180)  // Draw a semi-circle
         turtle.penUp()
