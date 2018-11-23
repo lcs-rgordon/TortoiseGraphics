@@ -6,9 +6,13 @@ import UIKit
 public typealias View = UIView
 #endif
 
-public class PlaygroundCanvas: View, Canvas {
-
+public class PlaygroundCanvas: View, Canvas, CustomPlaygroundDisplayConvertible {
+    
+    public var playgroundDescription : Any {
+        return self.visibleRect as Any
+    }
     public var frameRate: Int = 30
+    public var isAnimated : Bool = true
 
     // MARK: - Override
 
@@ -84,11 +88,13 @@ public class PlaygroundCanvas: View, Canvas {
 
     private func draw(with context: GraphicsContext) {
         drawingFrameIndex = tortoiseCharmer.charm(with: context, toFrame: drawingFrameIndex)
-        drawingTimer = Timer.scheduledTimer(timeInterval: animationInterval,
-                                            target: self,
-                                            selector: #selector(self.onAnimaitionTimer(timer:)),
-                                            userInfo: nil,
-                                            repeats: false)
+        if self.isAnimated {
+            drawingTimer = Timer.scheduledTimer(timeInterval: animationInterval,
+                                                target: self,
+                                                selector: #selector(self.onAnimaitionTimer(timer:)),
+                                                userInfo: nil,
+                                                repeats: false)
+        }
     }
 
     @objc private func onAnimaitionTimer(timer: Timer) {
