@@ -11,46 +11,47 @@ PlaygroundPage.current.liveView = canvas
 /**
  Draws `n` line segments.
  
- - parameter with: The Tortoise object that will do the drawing.
- - parameter segmentCount: Number of line segments to be drawn.
+ - parameter tortoise: The Tortoise object that will do the drawing.
+ - parameter segments: Number of line segments to be drawn.
  - parameter length: The length of each line segement to be drawn.
  - parameter angle: Degrees to turn before drawing next segement.
  
  */
-func polyline(with t : Tortoise, segmentCount n : Int, length : Double, angle : Double) {
-    for _ in 1...n {
-        t.forward(length)
-        t.left(angle)
+func polyline(tortoise : Tortoise, segmentCount segments : Int, length : Double, angle : Double) {
+    for _ in 1...segments {
+        tortoise.forward(length)
+        tortoise.left(angle)
     }
 }
 
 /**
  Draws an arc with the given radius and angle.
  
- - parameter with: The Tortoise object that will do the drawing.
+ - parameter tortoise: The Tortoise object that will do the drawing.
  - parameter radius: The radius of the circle to be drawn.
  - parameter angle: The angle subtended by the arc, in degrees.
  
  */
-func arc(with t : Tortoise, radius r : Double, angle : Int) {
+func arc(tortoise : Tortoise, radius : Double, angle : Int) {
     
     // Source: https://bit.ly/2K9JWbz
-    let arcLength = 2 * Double.pi * r * Double(abs(angle)) / 360
-    let n = Int(arcLength / 4) + 1
-    let stepLength = arcLength / Double(n)
-    let stepAngle = Double(angle) / Double(n)
+    let arcLength = 2 * Double.pi * radius * Double(abs(angle)) / 360
+    let segments = Int(arcLength / 4) + 1
+    let stepLength = arcLength / Double(segments)
+    let stepAngle = Double(angle) / Double(segments)
     
     // Making a slight left turn before starting reduces the error
     // caused by the linear approximation of the arc
-    t.left(stepAngle / 2)
-    polyline(with: t, segmentCount: n, length: stepLength, angle: stepAngle)
-    t.right(stepAngle / 2)
+    tortoise.left(stepAngle / 2)
+    polyline(tortoise: tortoise, segmentCount: segments, length: stepLength, angle: stepAngle)
+    tortoise.right(stepAngle / 2)
 }
 
 canvas.drawing { turtle in
+    
     // Draw 10 semi-circles of increasing radius size
     for i in 1...10 {
-        arc(with: turtle, radius: 10 * Double(i), angle: 180)  // Draw a semi-circle
+        arc(tortoise: turtle, radius: 10 * Double(i), angle: 180) // Draw a semi-circle
         turtle.penUp()
         turtle.left(90)
         turtle.forward(10)
@@ -58,4 +59,5 @@ canvas.drawing { turtle in
         turtle.penDown()
     }
     turtle.hideTortoise()
+    
 }

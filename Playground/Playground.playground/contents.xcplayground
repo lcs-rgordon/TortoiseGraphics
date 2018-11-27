@@ -3,13 +3,11 @@
     <pages>
         <page name='With a tortoise'/>
         <page name='With 2 tortoises'/>
-        <page name='Blank page'/>
-        <page name='Circle of Circles'/>
         <page name='Dashed Circle'/>
         <page name='Disjointed Circles'/>
-        <page name='Random Events'/>
         <page name='Hairball'/>
-        <page name='Think Big'/>
         <page name='Many hairballs'/>
+        <page name='Random Events'/>
+        <page name='Think Big'/>
     </pages>
 </playground>
